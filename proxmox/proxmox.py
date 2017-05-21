@@ -8,8 +8,8 @@
 ##################################
 
 import json
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import logging
 
 from .exceptions import ProxmoxAuthError, ProxmoxConnectionError, ProxmoxTypeError, ProxmoxError
@@ -74,7 +74,7 @@ class ConnectorAPI(object):
 
         if arguments:
             try:
-                urlencoded_arguments = urllib.urlencode(arguments)
+                urlencoded_arguments = urllib.parse.urlencode(arguments)
                 url = "{0}?{1}".format(url, urlencoded_arguments)
             except TypeError:
                 raise ProxmoxTypeError("urllib.urlencode requires 'arguments' to be of type dict()")
@@ -92,7 +92,7 @@ class ConnectorAPI(object):
         url = "{0}/{1}".format(self.baseurl, filter)
 
         try:
-            urlencoded_params = params if isinstance(params, str) else urllib.urlencode(params)
+            urlencoded_params = params if isinstance(params, str) else urllib.parse.urlencode(params)
             return self.__query('post', url, urlencoded_params)
         except TypeError:
             raise ProxmoxConnectionError("'params' argument is if incorrect type. Should be a dict.")
@@ -108,7 +108,7 @@ class ConnectorAPI(object):
         url = "{0}/{1}".format(self.baseurl, filter)
 
         try:
-            urlencoded_params = params if isinstance(params, str) else urllib.urlencode(params)
+            urlencoded_params = params if isinstance(params, str) else urllib.parse.urlencode(params)
             return self.__query('put', url, urlencoded_params)
         except TypeError:
             raise ProxmoxConnectionError("'params' argument is if incorrect type. Should be a dict.")
@@ -124,7 +124,7 @@ class ConnectorAPI(object):
         url = "{0}/{1}".format(self.baseurl, filter)
 
         try:
-            urlencoded_params = params if isinstance(params, str) else urllib.urlencode(params)
+            urlencoded_params = params if isinstance(params, str) else urllib.parse.urlencode(params)
             return self.__query('delete', url, urlencoded_params)
         except TypeError:
             raise ProxmoxConnectionError("'params' argument is if incorrect type. Should be a dict.")
@@ -137,31 +137,31 @@ class ConnectorAPI(object):
         logging.debug('Request url: %s' % url)
 
         if verb == 'get':
-            request = urllib2.Request(url)
+            request = urllib.request.Request(url)
         if verb == 'post':
             logging.debug('Request params: %s' % post_params)
-            request = urllib2.Request(url, post_params)
+            request = urllib.request.Request(url, post_params)
         if verb == 'put':
             logging.debug('Request params: %s' % post_params)
-            request = urllib2.Request(url, post_params)
+            request = urllib.request.Request(url, post_params)
             request.get_method = lambda: 'PUT'
         if verb == 'delete':
             logging.debug('Request params: %s' % post_params)
-            request = urllib2.Request(url, post_params)
+            request = urllib.request.Request(url, post_params)
             request.get_method = lambda: 'DELETE'
 
         headers = {"Accept": "application/json",
                    "CSRFPreventionToken": "%s" % self._auth.CSRFPreventionToken,
                    "Cookie": "PVEAuthCookie=%s" % self._auth.ticket}
 
-        for k,v in headers.items():
+        for k,v in list(headers.items()):
             request.add_header(k, v)
 
         try:
-            response = urllib2.urlopen(request)
-        except urllib2.HTTPError as e:  # username or password is incorrect.
+            response = urllib.request.urlopen(request)
+        except urllib.error.HTTPError as e:  # username or password is incorrect.
             raise ProxmoxError(e)
-        except urllib2.URLError as e:   # server or port are incorrect. or the server is down.
+        except urllib.error.URLError as e:   # server or port are incorrect. or the server is down.
             raise ProxmoxConnectionError(e)
 
         try:
@@ -194,17 +194,17 @@ class Connector(ConnectorAPI):
         If an invalid
         """
         url = "{baseurl}/access/ticket".format(**self.__dict__)
-        post = urllib.urlencode({"username": str(username), "password": str(password)})
+        post = urllib.parse.urlencode({"username": str(username), "password": str(password)})
         headers = {"Accept": "application/json"}
 
         logging.debug("GET {0}".format(url))
-        request = urllib2.Request(url, post, headers)
+        request = urllib.request.Request(url, post, headers)
 
         try:
-            response = urllib2.urlopen(request)
-        except urllib2.HTTPError as e:  # username or password is incorrect.
+            response = urllib.request.urlopen(request)
+        except urllib.error.HTTPError as e:  # username or password is incorrect.
             raise ProxmoxAuthError(e)
-        except urllib2.URLError as e:   # server or port are incorrect. or the server is down.
+        except urllib.error.URLError as e:   # server or port are incorrect. or the server is down.
             raise ProxmoxConnectionError(e)
 
         try:
@@ -270,7 +270,7 @@ class AttrMethod(object):
         Example:   myobj.status.current() ==> "status/current"
         """
 
-        key = urllib.quote(key)
+        key = urllib.parse.quote(key)
 
         if key == "post":
             return  AttrPostMethod(self.parent, self.method_name)

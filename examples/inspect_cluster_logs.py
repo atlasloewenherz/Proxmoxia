@@ -24,6 +24,6 @@ p = proxmox.Proxmox(c)
 
 # print cluster logs
 for line in p.cluster.log(max=5):
-    print "{node}: {user} - {msg}".format(**line)
+    print("{node}: {user} - {msg}".format(**line))
 
 
