@@ -207,7 +207,7 @@ class Connector(ConnectorAPI):
         request = urllib.request.Request(url, post, headers)
 
         try:
-            response = urllib.request.urlopen(request, ctx)
+            response = urllib.request.urlopen(request, context=ctx)
         except urllib.error.HTTPError as e:  # username or password is incorrect.
             raise ProxmoxAuthError(e)
         except urllib.error.URLError as e:   # server or port are incorrect. or the server is down.
