@@ -11,6 +11,7 @@ import json
 import urllib.request, urllib.parse, urllib.error
 import urllib.request, urllib.error, urllib.parse
 import logging
+import ssl
 
 from .exceptions import ProxmoxAuthError, ProxmoxConnectionError, ProxmoxTypeError, ProxmoxError
 from .exceptions import logcall
@@ -199,7 +200,11 @@ class Connector(ConnectorAPI):
         headers = {"Accept": "application/json"}
 
         logging.debug("GET {0}".format(url))
-        request = urllib.request.Request(url, post, headers, verify=False)
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+        request = urllib.request.Request(url, post, headers, context=ctx)
 
         try:
             response = urllib.request.urlopen(request)
