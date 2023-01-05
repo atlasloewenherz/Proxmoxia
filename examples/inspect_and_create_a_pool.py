@@ -27,7 +27,7 @@ if 'example_test' not in [x['poolid'] for x in p.pools()]:
     p.pools.post(poolid='example_test', comment="its a god damn pool")
 
 # get information about the pool
-print p.pools('example_test')
+print(p.pools('example_test'))
 
 # and call delete on the pool
 p.pools('example_test').delete()

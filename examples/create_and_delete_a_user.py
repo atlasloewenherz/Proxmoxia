@@ -26,10 +26,10 @@ p = proxmox.Proxmox(c)
 if 'andrew.bunday@pve' not in [x['userid'] for x in p.access.users()]:
     p.access.users.post(userid='andrew.bunday@pve', comment="test user", password="strawberries")
 
-print p.access.users()
+print(p.access.users())
 
 # get information about the user
-print p.access.users('andrew.bunday@pve').get()
+print(p.access.users('andrew.bunday@pve').get())
 
 ## and call delete on the user
 p.access.users('andrew.bunday@pve').delete()

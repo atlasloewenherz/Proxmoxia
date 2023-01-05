@@ -39,7 +39,7 @@ while node.tasks(taskid).status()['status'] == 'running':
 
 # print out the logs
 for line in node.tasks(taskid).log():
-    print line['t']
+    print(line['t'])
 
 try:
     # start up the container
