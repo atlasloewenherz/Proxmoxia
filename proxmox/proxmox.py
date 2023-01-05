@@ -204,10 +204,10 @@ class Connector(ConnectorAPI):
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
 
-        request = urllib.request.Request(url, post, headers, context=ctx)
+        request = urllib.request.Request(url, post, headers)
 
         try:
-            response = urllib.request.urlopen(request)
+            response = urllib.request.urlopen(request, ctx)
         except urllib.error.HTTPError as e:  # username or password is incorrect.
             raise ProxmoxAuthError(e)
         except urllib.error.URLError as e:   # server or port are incorrect. or the server is down.
