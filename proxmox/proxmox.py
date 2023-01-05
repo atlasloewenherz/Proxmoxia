@@ -199,7 +199,7 @@ class Connector(ConnectorAPI):
         headers = {"Accept": "application/json"}
 
         logging.debug("GET {0}".format(url))
-        request = urllib.request.Request(url, post, headers)
+        request = urllib.request.Request(url, post, headers, verify=False)
 
         try:
             response = urllib.request.urlopen(request)
