@@ -195,6 +195,7 @@ class Connector(ConnectorAPI):
         """
         url = "{baseurl}/access/ticket".format(**self.__dict__)
         post = urllib.parse.urlencode({"username": str(username), "password": str(password)})
+        post = post.encode('utf-8')
         headers = {"Accept": "application/json"}
 
         logging.debug("GET {0}".format(url))
